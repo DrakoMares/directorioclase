@@ -1,0 +1,83 @@
+<?php
+
+/**
+ * Implements hook_menu()
+ */
+function directorio_menu() {
+	$items = array();
+
+	$items["directorio"] = array(
+		'title' => 'Directorio',
+		'description' => 'Listado de contactos en el sitio',
+		'page callback' => 'directorio_page',
+		'access arguments' => array("ver directorio"),
+		'type' => MENU_NORMAL_ITEM
+	);
+
+	// $items["directorio/buscar"] = array(
+
+	// );
+
+	// $items["directorio/buscar/nombre/%"] = array(
+
+	// );
+
+	// $items["directorio/buscar/extension/%"] = array(
+
+	// );
+
+	$items["contactos/agregar"] = array(
+		'title' => 'Agregar contacto',
+		'description' => 'Agregar un nuevo contacto',
+		'type' => MENU_NORMAL_ITEM,
+		'access arguemnts' => array("agregar contacto"),
+
+	);
+
+	// $items["contactos/ver/%"] = array(
+
+	// );
+
+	// $items["contactos/editar/%"] = array(
+
+	// );
+
+	// $items["eliminar/%"] = array(
+
+	// );
+
+	return $items;
+}
+
+
+/**
+ * Callback principal de /directorio
+ * Muestra un listado de contactos en el sitio
+ */
+function directorio_page() {
+	return "Esto es un directorio";
+}
+
+/**
+ * Implements hook_permission()
+ */
+function directorio_permission() {
+	return array(
+		'ver directorio' => array(
+			'title' => t("Ver el directorio de contactos"),
+			'description' => t("Permite mostrar el directorio de contactos")
+		),
+		'agregar contacto' => array(
+			'title' => t("Agregar contactos"),
+			'description' => t("Permite crear nuevos contactos en el directorio")
+		)
+	);
+}
+
+/**
+ * Callback para contactos/agregar
+ * Muestra la forma para agregar un contacto
+ */
+function directorio_agregarContactoForm() {
+
+}
