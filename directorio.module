@@ -30,8 +30,9 @@ function directorio_menu() {
 		'title' => 'Agregar contacto',
 		'description' => 'Agregar un nuevo contacto',
 		'type' => MENU_NORMAL_ITEM,
-		'access arguemnts' => array("agregar contacto"),
-
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array("directorio_agregarContactoForm"),
+		'access arguments' => array("agregar contacto"),
 	);
 
 	// $items["contactos/ver/%"] = array(
@@ -78,6 +79,113 @@ function directorio_permission() {
  * Callback para contactos/agregar
  * Muestra la forma para agregar un contacto
  */
-function directorio_agregarContactoForm() {
+function directorio_agregarContactoForm($form) {
+	$form = array();
 
+	$form["nombre"] = array(
+		'#type' => 'textfield',
+		'#title' => t("Nombre"),
+		'#required' => TRUE,
+		'#description' => t("Escriba el nombre o los nombres del contacto")
+	);
+
+	$form["apellido_paterno"] = array(
+		'#type' => 'textfield',
+		'#title' => t("Apellido paterno"),
+		'#required' => TRUE,
+		'#description' => t("Escriba el apellido paterno")
+	);
+
+	$form["apellido_materno"] = array(
+		'#type' => 'textfield',
+		'#title' => t("Apellido materno"),
+		'#required' => FALSE,
+		'#description' => t("Escriba el apellido materno. Este campo es opcional.")
+	);
+
+	$form["departamento"] = array(
+		'#type' => 'select',
+		'#title' => t("Departamento"),
+		'#required' => TRUE,
+		'#description' => t("Seleccione el departamento al que pertenece esta persona"),
+		'#options' => getDepartamento()
+	);
+
+	$form["telefono_oficina"] = array(
+		'#type' => 'textfield',
+		'#title' => t("Teléfono de oficina"),
+		'#required' => TRUE,
+		'#description' => t("Escriba el teléfono de oficina"),
+		'#default_value' => _telefonoDeOficinaDefault()
+	);
+
+	$form["extension_telefonica"] = array(
+		'#type' => 'textfield',
+		'#title' => t("Extensión telefónica"),
+		'#required' => TRUE,
+		'#description' => t("Escriba la extensión telefónica del contacto")
+	);
+
+	$form["email_trabajo"] = array(
+		'#type' => 'textfield',
+		'#title' => t("Correo electrónico del trabajo"),
+		'#required' => FALSE,
+		'#description' => t("Escriba el correo electrónico del trabajo del contacto")
+	);
+
+	$form["email_personal"] = array(
+		'#type' => 'textfield',
+		'#title' => t("Correo electrónico personal"),
+		'#required' => FALSE,
+		'#description' => t("Escriba el correo electrónico personal del contacto")
+	);
+
+	$form["telefono_casa"] = array(
+		'#type' => 'textfield',
+		'#title' => t("Teléfono de casa"),
+		'#required' => FALSE,
+		'#description' => t("Escriba el teléfono de casa")
+	);
+
+	$form["telefono_celular"] = array(
+		'#type' => 'textfield',
+		'#title' => t("Teléfono celular"),
+		'#required' => FALSE,
+		'#description' => t("Escriba el teléfono celular del contacto")
+	);
+
+	$form["actions"] = array(
+		'#prefix' => '<div class="actions well">',
+		'#suffix' => '</div>'
+	);
+
+	$form["actions"]["submit"] = array(
+		'#type' => 'submit',
+		'#value' => t("Save")
+	);
+
+	return $form;
+}
+
+/**
+ * Listado de departamentos en la compañía
+ *
+ * @return array listado de departamentos
+ */
+function getDepartamento() {
+	return array(
+		'administracion' => t("Administración"),
+		'recursos_humanos' => t("Recursos Humanos"),
+		'sistemas' => t("Sistemas"),
+		'ventas' => t("Ventas")
+	);
+}
+
+
+/**
+ * Número de teléfono por default de la organización
+ * @return  string teléfono de oficina por default
+ */
+function _telefonoDeOficinaDefault() {
+	return "2020-7350";
 }
