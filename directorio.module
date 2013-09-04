@@ -168,6 +168,14 @@ function directorio_agregarContactoForm($form) {
 }
 
 /**
+ * Submit callback para directorio_agregarContactoForm
+ */
+function directorio_agregarContactoForm_submit(&$form, &$form_state) {
+	$values = $form_state["values"];
+	dsm($values);
+}
+
+/**
  * Listado de departamentos en la compañía
  *
  * @return array listado de departamentos
