@@ -35,9 +35,15 @@ function directorio_menu() {
 		'access arguments' => array("agregar contacto"),
 	);
 
-	// $items["contactos/ver/%"] = array(
-
-	// );
+	$items["contactos/ver/%"] = array(
+		'title callback' => 'contactosTitle',
+		'title arguments' => array(1, 2),
+		'description' => 'Ver contacto',
+		'page callback' => 'contactosVer',
+		'page arguments' => array(2),
+		'access arguments' => array("ver directorio"),
+		'type' => MENU_CALLBACK
+	);
 
 	// $items["contactos/editar/%"] = array(
 
@@ -50,6 +56,65 @@ function directorio_menu() {
 	return $items;
 }
 
+
+/**
+ * Title callback
+ */
+function contactosTitle($op, $cid) {
+	$contacto = contactosLoad($cid);
+
+	$output = "";
+	switch($op) {
+		case "ver": 
+			$output = contactoRealname($contacto);
+		break;
+
+		case "editar":
+			$output = t("Editar contacto: !contacto", array("!contacto" => contactoRealname($contacto)));
+		break;
+	}
+
+	return $output;
+}
+
+/**
+ * Formatea el nombre de un contacto
+ *
+ * @return string nombre del contacto
+ */
+function contactoRealname($contacto) {
+	if(is_array($contacto)) {
+		return $contacto["nombre"] . " " . $contacto["apellido_paterno"] . " " . $contacto["apellido_materno"];
+	}
+	else if(is_object($contacto)) {
+		return $contacto->nombre . " " . $contacto->apellido_paterno . " " . $contacto->apellido_materno;
+	}
+	else {
+		return NULL;
+	}
+}
+
+/**
+ * Page callback para contactos/ver/%
+ */
+function contactosVer($cid) {
+	$contacto = contactosLoad($cid);
+	dsm($contacto);
+
+	return "Hola";
+}
+
+/**
+ * Load contacto
+ * @return object contacto
+ */
+function contactosLoad($cid) {
+	return db_select("contactos", "c")
+		->fields("c")
+		->condition("c.cid", $cid, "=")
+		->execute()
+		->fetchObject();
+}
 
 /**
  * Callback principal de /directorio
@@ -71,7 +136,7 @@ function directorio_permission() {
 		'agregar contacto' => array(
 			'title' => t("Agregar contactos"),
 			'description' => t("Permite crear nuevos contactos en el directorio")
-		)
+		),
 	);
 }
 
@@ -119,7 +184,7 @@ function directorio_agregarContactoForm($form) {
 		'#default_value' => _telefonoDeOficinaDefault()
 	);
 
-	$form["extension_telefonica"] = array(
+	$form["oficina_extension"] = array(
 		'#type' => 'textfield',
 		'#title' => t("Extensión telefónica"),
 		'#required' => TRUE,
@@ -173,6 +238,30 @@ function directorio_agregarContactoForm($form) {
 function directorio_agregarContactoForm_submit(&$form, &$form_state) {
 	$values = $form_state["values"];
 	dsm($values);
+
+	$persona = array(
+		'nombre' => $values["nombre"],
+		'apellido_paterno' => $values["apellido_paterno"],
+		'apellido_materno' => $values["apellido_materno"],
+		'departamento' => $values["departamento"],
+		'telefono_oficina' => $values["telefono_oficina"],
+		'oficina_extension' => $values["oficina_extension"],
+		'email_trabajo' => $values["email_trabajo"],
+		'email_personal' => $values["email_personal"],
+		'telefono_celular' => $values["telefono_celular"],
+		'telefono_casa' => $values["telefono_casa"]
+	);
+
+	$cid = db_insert("contactos")
+		->fields($persona)
+		->execute();
+
+	if($cid) {
+		drupal_set_message(t("Se insertó con éxito el contacto con id !id", array("!id" => $cid)));
+	}
+	else {
+		drupal_set_message(t("Hubo un error"), "error");
+	}
 }
 
 /**
